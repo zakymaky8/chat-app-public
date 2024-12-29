@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
+import { socket } from "./WriteMessage"
 
 
 const LoginForm = () => {
@@ -30,9 +31,9 @@ const LoginForm = () => {
                 setErr(error)
                 router.replace(pathname)
             } else {
-                const { token } = await res.json()
+                const { token, user } = await res.json();
+                socket.emit("go online", user._id)
                 document.cookie = `token=${token}; path=/; secure`
-                // document.cookie = `token=${token}; path=/; secure`
                 router.replace("/chats#chats")
             }
         }
