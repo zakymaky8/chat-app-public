@@ -2,7 +2,6 @@
 
 import Search from '@/components/Search'
 import { TUser } from '@/utils/types/type'
-import Link from 'next/link'
 import { useState } from 'react'
 
 
@@ -16,7 +15,15 @@ const Searches = () => {
            <h4 className='opacity-80'>User according to your search key</h4>
            <ul className='bg-green-800 p-5 min-w-72 gap-2 w-[40%] flex flex-col items-center'>
                 {userData?.username ?
-                     <Link href={`/chats/${userData._id}#chats`} className='hover:opacity-70'>👉 {userData.username}</Link>: 
+                     <button onClick={() => {
+                      if (userData.preferences.alowedChats === "everyone") {
+                        window.location.href = `/chats/${userData._id}#chats`
+                      } else if (userData.preferences.alowedChats === "nobody") {
+                        alert("Sorry This User Doesn't Allow Chats!")
+                      } else if (userData.preferences.alowedChats === "with_request") {
+                        // send request
+                      }
+                     }} className='hover:opacity-70'>👉 {userData.username}</button>:
                      <span className="text-yellow-600">No user Found!</span>}
            </ul>
         </div>
