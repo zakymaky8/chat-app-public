@@ -14,7 +14,7 @@ const Logout = ({current}: {current: TUser}) => {
             socket.emit("go offline", current?._id)
             document.cookie = `token=${null}; path=/; secure`
             router.push("/login");
-        }} className="text-[14px] text-[red]  hover:opacity-70">Logout</button>
+        }} className="text-[11px]  text-[red]  hover:opacity-70">Logout</button>
     </div>
 
   )
