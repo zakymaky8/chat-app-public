@@ -35,7 +35,8 @@ const SignUpForm = () => {
             body: JSON.stringify(USERDATA)
         })
         if (!res.ok) {
-            setErr("Registration Error try again")
+            const { error } = await res.json()
+            setErr(error)
             router.replace(pathname)
         } else {
           const { message } = await res.json()
