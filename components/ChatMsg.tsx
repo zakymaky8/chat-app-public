@@ -41,7 +41,7 @@ const ChatMsg = ({setData, chatdata, current, target}: {setData: Dispatch<SetSta
     }
   }
   return (
-    <div className={`flex flex-col gap-4 ${chatdata.user_id === current?._id ? "bg-[#08233c] self-end" : "bg-[#031009] self-start"} w-[80%] bg-opacity-80 p-2 pl-3 ml-4 mr-4 rounded-lg`} style={{boxShadow: "inset 1px 1px 3px 0 black"}}>
+    <div className={`flex flex-col gap-4 ${chatdata.user_id === current?._id ? "bg-[#08233c] self-end" : "bg-[#031009] self-start"} ${current?.preferences.theme === "dark" ? "border-2" : ""} w-[80%] bg-opacity-80 p-2 pl-3 ml-4 mr-4 rounded-lg`} style={{boxShadow: "inset 1px 1px 3px 0 black"}}>
       <h4 className="text-[11px] -mb-[10px] cursor-pointer hover:underline text-yellow-500 italic self-end">{user?.username === current?.username ? `You: ${user?.username}` : `Friend: ${user?.username}`}</h4>
       {
         isEditMode ? <EditMessage setData={setData} current={current?._id} target={target?._id} originalValue = {chatdata.messageText} msgId={chatdata._id} setIsEditMode={setIsEditMode}/> :
