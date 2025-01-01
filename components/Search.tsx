@@ -4,24 +4,27 @@ import { TUser } from "@/utils/types/type"
 import { getTokenFromCookies } from "@/utils/types/utils"
 import { Dispatch, FormEvent, SetStateAction, useState } from "react"
 
-const Search = ({setUserData}: {setUserData: Dispatch<SetStateAction<TUser | null>>}) => {
+const Search = ({setUserData, setIsLoading}: {setUserData: Dispatch<SetStateAction<TUser | null>>, setIsLoading: Dispatch<SetStateAction<boolean>>}) => {
   const [searchKey, setSearchKey] = useState("")
   const [err, setErr] = useState("")
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    // await new Promise(resolve => setTimeout(resolve, 2000))
+    setIsLoading(true)
     e.preventDefault()
     const token = getTokenFromCookies()
     const res = await fetch(`http://localhost:1234/search?search_key=${searchKey}`, {
       headers: {
-        authorization: `Bearer ${token}`,
+        "authorization": `Bearer ${token}`,
         "content-type": "application/json"
       }
     })
     if (!res.ok) {
+      setIsLoading(false)
       setErr(res.statusText)
     }
     const {userResult} = await res.json()
-    // console.log(userResult)
+    setIsLoading(false)
     setUserData(userResult)
   }
 
