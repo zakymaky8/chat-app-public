@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  background-color: rgb(39, 84, 65);
+  color: rgb(254, 255, 248);
+}
+
+
+
+.spinner {
+  animation: spin 1.5s forwards infinite linear;
+  height: 60px;
+  width: 60px;
+  border-left: 2px rgb(0, 104, 66) solid;
+  border-right: 2px solid rgb(104, 0, 0);
+  border-radius: 50%;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(720deg);
+  }
+}
