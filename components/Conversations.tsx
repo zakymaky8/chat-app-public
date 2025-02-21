@@ -1,11 +1,12 @@
 "use client"
 
 import { TUser } from "@/utils/types/type"
-import { getTokenFromCookies, TChats } from "@/utils/types/utils"
+import { TChats } from "@/utils/types/utils"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import ChatMsg from "./ChatMsg"
 import WriteMessage, { socket } from "./WriteMessage"
+import { getConversationByTwo } from "@/actions/fetches"
 
 export type TData = {currentUser: TUser | null, targetedUser: TUser | null, chatCollections: TChats[]}
 
@@ -17,26 +18,43 @@ const Conversations = ({chatId}: {chatId: string}) => {
     const router = useRouter()
 
     useEffect(() => {
+
+        socket.on("get message", (message) => {
+          setData(prev => {
+            return {...prev, chatCollections: message}
+          })
+        })
+
+        socket.on("get updated", (message) => {
+          setData(prev => {
+            return {...prev, chatCollections: message}
+          })
+        })
+
+        socket.on("get reminants", (message) => {
+          setData(prev => {
+            return {...prev, chatCollections: message}
+          })
+        })
+
         async function getConversations() {
-          // await new Promise(resolve => setTimeout(resolve, 9000))
-            const token = getTokenFromCookies()
-            const res = await fetch(`http://localhost:1234/chats?target=${chatId}`, {
-                headers: {
-                "authorization": `Bearer ${token}`,
-                "content-type": "application/json"
-              },
-            });
-            if (!res.ok) {
-              setIsLoading(false)
-              socket.emit("go offline", data?.currentUser?._id)
-              document.cookie = `token=${null}; path=/; secure`
-              router.replace("/login")
-            }
+          const { success, redirectUrl, data } = await getConversationByTwo(chatId);
+          if (!success && redirectUrl !==null) {
             setIsLoading(false)
-            setData( await res.json())
-        }
-        getConversations()
-    }, [data])
+            router.replace(redirectUrl)
+          }
+          setIsLoading(false)
+          setData(data)
+      }
+      getConversations()
+
+      return () => {
+        socket.off("get message")
+        socket.off("get updated")
+        socket.off("get reminants")
+    }
+
+    }, [chatId, router])
   return (
     <div className={`flex ${data.currentUser?.preferences.theme === "light" ? "bg-yellow-950" : "bg-black"} flex-col grow overflow-auto border-t-[4px] border-opacity-55 border-black`} style={{scrollbarWidth: "none"}}>
       <div className="relative flex flex-col min-h-[502px] h-max justify-between">
@@ -52,7 +70,18 @@ const Conversations = ({chatId}: {chatId: string}) => {
             }) : <li className='text-yellow-600 text-center'>No chat history!</li>
           }
         </ul>
-        <WriteMessage data={data} setData={setData} targetedUser={data.targetedUser} currentUser={data.currentUser} />
+
+        {
+          data?.currentUser?.preferences.alowedChats === "nobody" ?
+          <span>User Restrictions for chat</span> :
+          <WriteMessage
+              data={data}
+              setData={setData}
+              targetedUser={data.targetedUser}
+              currentUser={data.currentUser}
+          />
+
+        }
       </div>
     </div>
   )

@@ -2,23 +2,13 @@
 
 import { Dispatch, FormEvent, SetStateAction, useEffect, useRef, useState } from "react"
 import { socket } from "./WriteMessage"
-import { TData } from "./Conversations"
 
 
-const EditMessage = ({originalValue, current, target, msgId, setData, setIsEditMode}: {originalValue: string | undefined, current: string | undefined, target: string | undefined, msgId: string, setData: Dispatch<SetStateAction<TData>>, setIsEditMode: Dispatch<SetStateAction<boolean>>}) => {
+const EditMessage = ({originalValue, current, target, msgId, setIsEditMode}: {originalValue: string | undefined, current: string | undefined, target: string | undefined, msgId: string, setIsEditMode: Dispatch<SetStateAction<boolean>>}) => {
     const  [editValue, setEditValue] = useState(originalValue)
     const refObj = useRef<HTMLInputElement|null>(null)
       useEffect(() => {
         refObj?.current?.focus()
-        socket.on("get updated", (message) => {
-          setData(prev => {
-            return {...prev, chatCollections: message}
-          })
-        // alert(message)
-        })
-        return () => {
-          socket.off("get updated")
-        }
       }, [])
 
     function sendEdittedMessage(e: FormEvent<HTMLFormElement>) {

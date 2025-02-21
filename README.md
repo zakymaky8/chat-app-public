@@ -1,2 +1,1 @@
-# chat-app-public
-Public messaging app
+Chat App Public

@@ -1,10 +1,9 @@
 "use client"
 
 import { TUser } from "@/utils/types/type"
-import { getTokenFromCookies } from "@/utils/types/utils"
-import { Dispatch, FormEvent, SetStateAction, useState } from "react"
-import { socket } from "./WriteMessage"
+import { Dispatch, SetStateAction, useActionState } from "react"
 import { useRouter } from "next/navigation"
+import {  updateUserInfoAction } from "@/actions/updateBasicInfo"
 
 export type TProps = {
     profileInfo: TProfileInfo,
@@ -23,43 +22,21 @@ export type TProfileInfo = {
 
 const ChangeBasicInfo = ({profileInfo, setProfileInfo, user}: TProps) => {
 
-    const [err, setErr] = useState(null);
-    const [success, setSuccess] = useState(null);
     const router = useRouter()
 
-    async function handleSubmit(e:FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        const formdata = new FormData(e.target as HTMLFormElement);
-        const changeData = {
-            firstname: formdata.get("firstname"),
-            lastname: formdata.get("lastname"),
-            username: formdata.get("username"),
-            email: formdata.get("email"),
-        }
-        const token = getTokenFromCookies()
-        const res = await fetch("http://localhost:1234/update_user_info?type=basic", {
-            method: "PUT",
-            headers: {
-                "authorization": `Bearer ${token}`,
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(changeData)
-        })
-        if (!res.ok) {
-            const { error } = await res.json()
-            setErr(error)
-        } else {
-            const { message } = await res.json();
-            setSuccess(message)
-            setTimeout( ()=>{
-                socket.emit("go offline", user?._id)
-                document.cookie = `token=${null}; path=/; secure`
-                router.push("/login")
-            }, 1000);
-        }
+    const ActionWrapper = async (prev:{success: boolean, message: boolean, redirectUrl: string | null, data: null}, formdata: FormData) => {
+        return updateUserInfoAction(user!._id, "basic", formdata)
     }
+    const [state, formAction] = useActionState( ActionWrapper, { success: "", message: "", redirectUrl: "", data: null } )
+
+    if (state.success === false && state.redirectUrl !== null) {
+        router.replace(state.redirectUrl)
+    }
+
   return (
-    <form onKeyDown={(e) => {if  (e.key === "Enter") e.preventDefault()}} onSubmit={handleSubmit} className="flex flex-col gap-2 border-2 border-yellow-900 p-6">
+    <form
+        action={formAction}
+        onKeyDown={(e) => {if  (e.key === "Enter") e.preventDefault()}} className="flex flex-col gap-2 border-2 border-yellow-900 p-6">
         <h5 className="text-xl mb-8">Change Basic Info</h5>
         <div className="mb-2 flex justify-between items-center">
             <label htmlFor="fname">First Name: </label>
@@ -86,8 +63,8 @@ const ChangeBasicInfo = ({profileInfo, setProfileInfo, user}: TProps) => {
                 className="bg-black p-2 rounded-lg w-fit" placeholder="Update Email" type="email" name="email" id="email" />
         </div>
         {
-            err ? <span className="text-red-500 italic text-center">Error: {err}!</span> : success ? 
-            <span className="text-red-500 italic text-center">{success}!</span> : ""
+            (state.success === false && state.redirectUrl === null) ? <span className="text-red-500 italic text-center">Error: {state.message}!</span> : state.success === true ? 
+            <span className="text-red-500 italic text-center">{state.message}! (Logout and Login to see the changes)</span> : ""
         }
         <button type="submit" className="self-end bg-yellow-700 p-2 mt-5 rounded-lg hover:opacity-70">Save Changes</button>
     </form>
