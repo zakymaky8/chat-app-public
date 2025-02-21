@@ -1,31 +1,16 @@
 "use client"
 
 import Image from "next/image"
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, FormEvent, SetStateAction, useState } from "react"
 import sendMessageIcon from "../public/send.svg"
 import io from "socket.io-client"
 import { TUser } from "@/utils/types/type"
 import { TData } from "./Conversations"
-import { usePathname, useRouter } from "next/navigation"
 
 export const socket = io("http://localhost:1234")
 
-const WriteMessage = ({setData, data, targetedUser, currentUser}: {data: TData, setData: Dispatch<SetStateAction<TData>> ,targetedUser: TUser | null, currentUser: TUser | null}) => {
+const WriteMessage = ({targetedUser, currentUser}: {data: TData, setData: Dispatch<SetStateAction<TData>> ,targetedUser: TUser | null, currentUser: TUser | null}) => {
   const [value, setValue] = useState("")
-  const router = useRouter();
-  const pathname = usePathname()
-  useEffect(() => {
-
-    socket.on("get message", (message) => {
-      setData(prev => {
-        return {...prev, chatCollections: message}
-      })
-    })
-    return () => {
-        socket.off("get message")
-        // socket.off("delete message")
-    }
-  }, [])
 
   function sendMessage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -34,7 +19,6 @@ const WriteMessage = ({setData, data, targetedUser, currentUser}: {data: TData, 
       targetedUserId: targetedUser?._id,
       chat_msg: value
     })
-    router.replace(pathname, {scroll: false})
     setValue("")
   }
 

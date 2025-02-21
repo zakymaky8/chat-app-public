@@ -3,12 +3,12 @@
 
 import ActiveStatus from '@/components/ActiveStatus';
 import { TUser } from '@/utils/types/type';
-import { getTokenFromCookies } from '@/utils/types/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { socket } from './WriteMessage';
 import DeleteChat from './DeleteChat';
+import { getChattedUsers } from '@/actions/fetches';
 
 const ChatsLists =  () => {
     const router = useRouter();
@@ -22,23 +22,18 @@ const ChatsLists =  () => {
           }
         })
         async function getChatlist() {
-          // await new Promise(resolve => setTimeout(resolve, 5000))
-            const token = getTokenFromCookies()
-            const res = await fetch(`http://localhost:1234/users`, {
-                headers: {
-                  "authorization": `Bearer ${token}`,
-                  "content-type": "application/json"
-                }
-              })
-              if (!res.ok) {
-                setIsLoading(false)
-                router.replace("/login")
-              }
-            const { chattedUsers }: {chattedUsers: TUser[]} = await res.json();
+
+          const { success, redirectUrl, data } = await getChattedUsers();
+          if (!success && redirectUrl !== null) {
             setIsLoading(false)
-            setChatList(chattedUsers)
+            router.replace(redirectUrl)
+          }
+          setIsLoading(false)
+          const { chattedUsers } = data;
+          setChatList(chattedUsers)
         }
-        getChatlist()
+        getChatlist();
+
         return () => {
           socket.off("get reminants")
         }
@@ -48,7 +43,10 @@ const ChatsLists =  () => {
   return (
     <div className="flex flex-col bg-yellow-950 grow overflow-auto border-t-[4px] border-opacity-55 border-black" style={{scrollbarWidth: "none"}}>
       <div className='self-center gap-4 flex grow flex-col items-center p-6 w-full' style={{boxShadow: "inset 2px 2px 5px black"}}>
-        <h4 className='self-start -mt-4 text-[14px]'>Chatted users</h4>
+        <div className='flex justify-between w-full'>
+          <h4 className='self-start -mt-4 text-[14px]'>Chatted users</h4>
+          <button className='self-start -mt-4 text-[14px]' onClick={() => window.location.reload()}>Refresh</button>
+        </div>
         <ul className='self-center gap-4 flex grow flex-col items-center p-6 w-full'>
           {isLoading  ? <span className='spinner slef-center'></span> : chatList.length !==0 ?
             chatList.map(user => {

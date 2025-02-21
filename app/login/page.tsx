@@ -8,7 +8,7 @@ const page = () => {
       <h3 className='mb-4 text-2xl'>Log In</h3>
       <LoginForm />
       <div>
-        <p>No account yet? <Link href="/signup">Sign Up</Link></p>
+        <p>No account yet? <Link href="/signup" className='hover:opacity-80 ml-2 text-[#22b1f3]'>Sign Up</Link></p>
       </div>
     </div>
   )

@@ -1,8 +1,8 @@
 "use client"
 
-import { getTokenFromCookies } from "@/utils/types/utils"
 import { socket } from "./WriteMessage"
 import { TUser } from "@/utils/types/type"
+import { getTokenFromCookies } from "@/utils/types/utils"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 

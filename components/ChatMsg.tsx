@@ -6,29 +6,18 @@ import del from "../public/deletemsg.svg"
 import edit from "../public/edit.svg"
 import Image from "next/image"
 import { socket } from "./WriteMessage"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { TData } from "./Conversations"
 import EditMessage from "./EditMessage"
 
 
 
-const ChatMsg = ({setData, chatdata, current, target}: {setData: Dispatch<SetStateAction<TData>>, chatdata: TChats, current: TUser| null, target: TUser | null}) => {
+const ChatMsg = ({chatdata, current, target}: {setData: Dispatch<SetStateAction<TData>>, chatdata: TChats, current: TUser| null, target: TUser | null}) => {
 
   const [isEditMode, setIsEditMode] = useState(false);
 
   const getAuthor = () => chatdata.user_id === current?._id ? current : target;
   const user = getAuthor();
-
-  useEffect(() => {
-    socket.on("get reminants", (message) => {
-      setData(prev => {
-        return {...prev, chatCollections: message}
-      })
-    })
-    return () => {
-      socket.off("get reminants")
-    }
-  }, [])
 
   function deleteMessage() {
     const allowdeletion = confirm("are you sure you wanted to delete this message?")
@@ -44,7 +33,7 @@ const ChatMsg = ({setData, chatdata, current, target}: {setData: Dispatch<SetSta
     <div className={`flex flex-col gap-4 ${chatdata.user_id === current?._id ? "bg-[#08233c] self-end" : "bg-[#031009] self-start"} ${current?.preferences.theme === "dark" ? "border-2" : ""} w-[80%] bg-opacity-80 p-2 pl-3 ml-4 mr-4 rounded-lg`} style={{boxShadow: "inset 1px 1px 3px 0 black"}}>
       <h4 className="text-[11px] -mb-[10px] cursor-pointer hover:underline text-yellow-500 italic self-end">{user?.username === current?.username ? `You: ${user?.username}` : `Friend: ${user?.username}`}</h4>
       {
-        isEditMode ? <EditMessage setData={setData} current={current?._id} target={target?._id} originalValue = {chatdata.messageText} msgId={chatdata._id} setIsEditMode={setIsEditMode}/> :
+        isEditMode ? <EditMessage current={current?._id} target={target?._id} originalValue = {chatdata.messageText} msgId={chatdata._id} setIsEditMode={setIsEditMode}/> :
         <p className=" text-[14px] break-words">{chatdata.messageText}</p>
       }
       <div className="flex justify-between">
