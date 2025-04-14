@@ -17,23 +17,24 @@ type TProps = {
 const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: TProps) => {
 
     const [key, setKey] = useState("");
-    const [selectOn, setSelectOn] = useState(false);
-    const [selectedUsers, setSelectedUsers] = useState<TUser[]>([]);
-    const [result, setResult] = useState<TUser | null>(null)
+    const [selectOn, setSelectOn] = useState(user?.preferences.alowedChats === "selected_users" ? true : false);
+    const [selectedUsers, setSelectedUsers] = useState<TUser[]>(user!.allowedUsersToChat as TUser[]);
+    const [result, setResult] = useState<TUser | null>(null);
     const [search_err, setSearchErr] = useState(null);
-    const [allowChat, setAllowChat] = useState<string | undefined>(user?.alowedChats)
+    const [allowChat, setAllowChat] = useState<string | undefined>(user?.preferences.alowedChats);
+    const router = useRouter();
 
 
     async function handleUserSearch() {
-        const { data, message, success } = await getUserSearchResult(key);
-        if (success !== true) {
+        const { data, message, success, redirectUrl } = await getUserSearchResult(key);
+        if (redirectUrl === null && !success) {
             setSearchErr(message)
         }
         setResult(data.user)
+        setSearchErr(null)
         setKey("")
-    }
+    };
 
-    const router = useRouter()
 
     const ActionWrapper = async (prev:{success: boolean, message: boolean, redirectUrl: string | null}, formdata: FormData) => {
         const selectedUsersId = selectedUsers.map(user => user._id)
@@ -48,14 +49,15 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
         router.replace("/login")
     }
 
+
   return (
     <form
         action={formAction}
-        onKeyDown={(e) => {if  (e.key === "Enter") e.preventDefault()}} className="flex flex-col gap-8 items-start border-2 border-yellow-900 p-6">
+        onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault() }} className="flex flex-col gap-8 items-start border-2 border-yellow-900 p-6">
 
         <div className="w-full flex justify-between gap-5">
             <label htmlFor="theme">Theme: </label>
-            <select name="theme" id="theme" className="bg-black p-2 rounded-lg w-fit" value={theme} onChange={(e) => setTheme(e.target.value)}>
+            <select name="theme" id="theme" className="bg-black p-2 rounded-lg w-fit grow" value={theme} onChange={(e) => setTheme(e.target.value)}>
                 <option value="light">Light  {theme == "light" ? "✅" : ""}</option>
                 <option value="dark">Dark  {theme == "dark" ? "✅" : ""}</option>
             </select>
@@ -63,7 +65,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
 
         <div  className="w-full flex justify-between gap-5">
             <label htmlFor="allowed_chats">Allow Chats: </label>
-            <select value={allowChat} name="allowed_chats" id="allowed_chats" className="bg-black p-2 rounded-lg w-fit" defaultValue={"everyone"}
+            <select value={allowChat} name="allowed_chats" id="allowed_chats" className="bg-black p-2 rounded-lg w-fit grow" defaultValue={"everyone"}
                 onChange={(e) => {
                     setAllowChat(e.target.value)
                     if (e.target.value === "selected_users") {
@@ -74,8 +76,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
                     }
                 }}>
                 <option value="everyone">Everyone</option>
-                <option value="nobody_temp">Nobody for now</option>
-                <option value="nobody_perm">Nobody forever</option>
+                <option value="nobody">Nobody</option>
                 <option value="with_request" disabled>With Request</option>
                 <option value="selected_users">Selected Users</option>
             </select>
@@ -108,7 +109,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
 
                         <div className="w-full flex justify-around gap-3 pb-2 pt-2">
 
-                            <div>🔎  <span className="text-green-400 italic">{result?.username}</span></div>
+                            <div>🔎 <span className="text-green-400 italic">{result?.username}</span></div>
 
                             <button
                                 type="button"
@@ -119,7 +120,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
                                 }}
                             >➕</button>
 
-                        </div> : <span className="text-[11px] italic text-red-500">{key === "" ? "" : search_err}</span>
+                        </div> : <span className="text-[11px] italic text-red-500">{search_err}</span>
 
                     }
                 <ul className="flex flex-col items-start mt-4">
@@ -149,7 +150,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
                 onChange={(e) => setAllowSearch(e.target.value as "allow" | "never")}
                 name="allow_search"
                 id="allow_search"
-                className="bg-black p-2 rounded-lg w-fit"
+                className="bg-black p-2 rounded-lg w-fit grow"
                 >
                 <option value="allow">Allow</option>
                 <option value="never">Never</option>
@@ -159,7 +160,7 @@ const ChatBehaSetting = ({user, theme, setTheme, allowSearch, setAllowSearch}: T
             state.success === false ? <span className="text-red-500 italic text-center">Error: {state.message}!</span> : state.success ? 
             <span className="text-red-500 italic text-center">{state.message}!</span> : ""
         }
-        <button type="submit" className="self-end bg-yellow-700 p-2 mt-5 rounded-lg hover:opacity-70">Save Changes</button>
+        <button type="submit" className="self-end bg-yellow-700 p-2 mt-7 rounded-lg hover:opacity-70">Save Changes</button>
     </form>
   )
 }

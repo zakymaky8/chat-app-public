@@ -17,9 +17,9 @@ export default async function Home() {
           <p className="italic text-[#85a7c8]">The place where you can chat with whoever born here!</p>
       </div>
       <div className="flex gap-10">
-        <Link href="login" className="opacity-70 hover:opacity-100">Login</Link>
+        <Link href="/login#login" className="opacity-70 hover:opacity-100">Login</Link>
         <span>or</span>
-        <Link href="signup" className="opacity-70 hover:opacity-100">Sign Up</Link>
+        <Link href="/signup#signup" className="opacity-70 hover:opacity-100">Sign Up</Link>
       </div>
     </div>
   );

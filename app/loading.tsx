@@ -1,8 +1,6 @@
 const Loading = () => {
   return (
-    <div>
-      Loading ...
-    </div>
+      <span className="self-center spinner"></span>
   )
 }
 

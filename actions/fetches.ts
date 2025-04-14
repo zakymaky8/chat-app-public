@@ -64,3 +64,10 @@ export const getConversationByTwo = async (target: string) => {
     return await commonFetch(token!, url)
 }
 
+
+export const getSelfConversations = async () => {
+    const token = await getAccessToken()
+    const url = `${process.env.API_URL}/api/chats/conversations_with/self/me`;
+
+    return await commonFetch(token!, url)
+}

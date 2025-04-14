@@ -1,18 +1,12 @@
 import { io } from "socket.io-client";
 
-export const getTokenFromCookies = () => {
-    const cookies = document.cookie.split("; ");
-    const tokenCookie = cookies.find(cookie => cookie.startsWith("token="));
-    return tokenCookie ? tokenCookie.split("=")[1] : null;
-};
-
-
 
 export type TChats = {
     _id: string,
-    createdAt: string,
-    updatedAt: string,
+    createdAt: Date,
+    updatedAt: Date,
     messageText?: string,
+    replied_to: string | null
     user_id: string,
     chatted_to: string,
     isUpdated: boolean

@@ -23,8 +23,8 @@ const Searches = ({ currentUser }: { currentUser: TUser }) => {
                   <span>👉 {userData.username}</span>
                   {
                     (userData.preferences.alowedChats === "everyone") || (userData.preferences.alowedChats === "selected_users" && userData.allowedUsersToChat.includes(currentUser._id as never)) ?
-                    <Link href={`/chats/${userData._id}#chats`}>Chat</Link> :
-                     "Not allowed"
+                    <Link href={`/chats/${userData._id}#chats`} className='hover:text-[#040d14] hover:underline text-[#08233c]'>Chat</Link> :
+                    <span className='text-black'>Not allowed</span>
 
                   }
                 </div>
