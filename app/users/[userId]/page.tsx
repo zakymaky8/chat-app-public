@@ -3,9 +3,9 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 
 const SingleUserProfile = async ({params}: {params: Promise<{userId: string}>}) => {
-    const { userId } = await params.userId;
+    const { userId } = await params;
     const token = (await cookies()).get("token")?.value
-    const res = await fetch(`http://localhost:1234/user/${userId}`, {
+    const res = await fetch(`${process.env.API_URL}/user/${userId}`, {
         headers: {
             "authorization": `Bearer ${token}`,
             "content-type": "application/json"
