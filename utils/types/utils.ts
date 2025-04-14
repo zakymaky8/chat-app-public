@@ -13,4 +13,4 @@ export type TChats = {
 }
 
 
-export const socket = io("http://localhost:1234")
+export const socket = io(process.env.API_URL)
