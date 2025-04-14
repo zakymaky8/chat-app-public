@@ -13,4 +13,6 @@ export type TChats = {
 }
 
 
-export const socket = io(process.env.API_URL)
+export const socket = io(process.env.API_URL ?? "https://chat-api-0nwh.onrender.com", {
+    withCredentials: true,
+})
