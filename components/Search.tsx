@@ -34,8 +34,19 @@ const Search = ({setUserData, setIsLoading}: {setUserData: Dispatch<SetStateActi
 
   return (
     <form onSubmit={handleSubmit} className="self-center">
-       <input type="seach" name="search_key" onChange={(e) => setSearchKey(e.target.value)} placeholder="search usernames" className="pl-2 bg-green-900 bg-opacity-80 rounded-lg h-8 w-[200px] text-black" required/>
-       <button className="border-[1px] hover:border-black w-10 rounded-lg h-8" type="submit">👁️</button><br />
+       <input
+        type="seach"
+        name="search_key"
+        onChange={(e) => setSearchKey(e.target.value)} placeholder="search usernames"
+        className="pl-2 text-white bg-green-900 bg-opacity-80 h-11 w-[200px] focus:outline-none focus:border-[gray] border-[1px] border-transparent" required
+        />
+
+       <button
+        className="border-[4px] border-green-900  hover:bg-yellow-900 w-12 h-11"
+        type="submit"
+        >👁️
+      </button><br />
+
        {msg  && <span className="text-red-500 text-[12px]"> {msg}!</span>}
     </form>
   )

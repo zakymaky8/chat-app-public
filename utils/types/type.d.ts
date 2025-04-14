@@ -5,7 +5,7 @@ export type TUser = {
     username: string,
     password: string,
     email: string,
-    allowedUsersToChat: string[] | [],
+    allowedUsersToChat: string[] | TUser[],
     chattedUsers: string[],
     alowedChats: string,
     isActive: boolean,
