@@ -2,10 +2,10 @@ import ActiveStatus from "@/components/ActiveStatus";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
-const SingleUserProfile = async ({params}: {params: {userId: string}}) => {
-    // const { userId } = await params.userId;
+const SingleUserProfile = async ({params}: {params: Promise<{userId: string}>}) => {
+    const { userId } = await params.userId;
     const token = (await cookies()).get("token")?.value
-    const res = await fetch(`http://localhost:1234/user/${params.userId}`, {
+    const res = await fetch(`http://localhost:1234/user/${userId}`, {
         headers: {
             "authorization": `Bearer ${token}`,
             "content-type": "application/json"
