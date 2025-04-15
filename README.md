@@ -3,19 +3,29 @@
 ## Contents
 
 [Description](#description)
+
 [Tech Stack](#tech-stack-used)
+
 [Installation](#installation)
+
 [Contribution](#contribution)
+
 1. [option 1](#option-1)
 2. [option 2](#option-2)
 
 [Liscense](#license)
+
 [Deployement](#deployement)
+
 [Live Demo](#live-demo)
 
 
 ## Description
 - Front end chat application, which is made to streamline messaging exprerience between two users.
+
+## Preview
+
+![Chat Preview page]('./public/preview.png)
 
 #### How it works;
 1. First a user must create an account to be involved in messaging chatmates.
